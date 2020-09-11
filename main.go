@@ -2,12 +2,12 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"k8s.io/api/admission/v1beta1"
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/rest"
 	"strings"
-	ctrl "sigs.k8s.io/controller-runtime"
 )
 
 var needInjectDeployments []v1.Deployment = make([]v1.Deployment, 7, 8)
@@ -21,10 +21,11 @@ func main() {
 	})
 	r.Run()
 
-	config, err := clientcmd.BuildConfigFromFlags("", "")
+	config := rest.Config{Host: "45.32.39.122", APIPath: "api/v1/"}
+
+	client, err := kubernetes.NewForConfig(&config)
 	judgeError(err)
 
-	client, err := kubernetes.NewForConfig(config)
 	dList, derr := client.AppsV1().Deployments("namespace").List(
 		nil,
 		metav1.ListOptions{},
@@ -32,11 +33,17 @@ func main() {
 	judgeError(derr)
 
 	for _, deployment := range dList.Items {
-		if(filterDeployment(deployment)) {
-			_ = append(needInjectDeployments, deployment)
+		if filterDeployment(deployment) {
+			needInjectDeployments = append(needInjectDeployments, deployment)
 		}
 	}
 
+	response := v1beta1.AdmissionResponse{Allowed: true}
+	println(response)
+
+	//v1beta1.AdmissionResponse{Allowed: true, Patch: "aaa", PatchType: func() {}}
+	//v1beta1.PatchTypeJSONPatch
+	//v1beta
 	//spec := dList.Items[0].Spec
 	//specStr := spec.String()
 	//spec.Template.

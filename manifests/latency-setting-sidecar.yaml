@@ -1,0 +1,5 @@
+containers:
+  - name: latencyinjection
+    image: latencyinjection:v1
+    ports:
+      - containerPort: 8092

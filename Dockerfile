@@ -33,4 +33,7 @@ RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a -o main
 #WORKDIR /run
 #CMD ["/bin/bash"]
 #ENTRYPOINT ["sh", "-c", "sleep 5m"]
+
+EXPOSE 8092
+
 ENTRYPOINT ["./main"]

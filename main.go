@@ -9,6 +9,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
+	"os/exec"
+	"strconv"
 	"strings"
 	//"gopkg.in/yaml.v2"
 )
@@ -23,6 +25,7 @@ func main() {
 			"message": "pong",
 		})
 	})
+	r.GET("/latency/:number", latencyProcess)
 	r.GET("/getPodList", printPodList)
 
 	println("go listen start")
@@ -82,6 +85,34 @@ func main() {
 //func updateK8s(old :v1.oldDeployment, new :v1) {
 //
 //}
+
+func getAllNetCard() []string {
+	cmd := exec.Command("bash", "-c", "ifconfig -s | awk 'NR>2{print $1}'")
+	out, err := cmd.Output()
+	judgeError(err)
+
+	return strings.Split(string(out), " ")
+}
+
+func latencyProcess(c *gin.Context) {
+	//todo check float or no
+	latencyNum := c.GetInt("number")
+	netcards := getAllNetCard()
+
+	for _, netcard := range netcards {
+		setNetcardLatency(netcard, latencyNum)
+	}
+}
+
+func setNetcardLatency(netcard string, latencyNum int) {
+	command := exec.Command("tc",
+		"qdisc", "add", "dev",
+		netcard, "root", "netem",
+		"delay", strconv.Itoa(latencyNum/2)+"ms")
+	err := command.Run()
+	panic(err)
+}
+
 func initClient() *kubernetes.Clientset {
 	kubeconfig := flag.String("kubeconfig", "/root/.kube/config", "absolute path to the kubeconfig file")
 	flag.Parse()
@@ -93,12 +124,6 @@ func initClient() *kubernetes.Clientset {
 	judgeError(err)
 	return clientset
 }
-//
-//func printYaml(c *gin.Context) {
-//	clientset := initClient()
-//
-//	clientset
-//}
 
 func printPodList(c *gin.Context) {
 	clientset := initClient()

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: latencyinjection-test
+  labels:
+    app: latencyinjection
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: latencyinjection
+  template:
+    metadata:
+      labels:
+        app: latencyinjection
+    spec:
+      containers:
+        - name: latencyinjection
+          image: latencyinjection:v1
+          ports:
+            - containerPort: 8092

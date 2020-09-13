@@ -10,6 +10,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 	"strings"
+	//"gopkg.in/yaml.v2"
 )
 
 var needInjectDeployments []v1.Deployment = make([]v1.Deployment, 7, 8)
@@ -81,8 +82,7 @@ func main() {
 //func updateK8s(old :v1.oldDeployment, new :v1) {
 //
 //}
-
-func printPodList(c *gin.Context) {
+func initClient() *kubernetes.Clientset {
 	kubeconfig := flag.String("kubeconfig", "/root/.kube/config", "absolute path to the kubeconfig file")
 	flag.Parse()
 
@@ -91,6 +91,17 @@ func printPodList(c *gin.Context) {
 
 	clientset, err := kubernetes.NewForConfig(config)
 	judgeError(err)
+	return clientset
+}
+//
+//func printYaml(c *gin.Context) {
+//	clientset := initClient()
+//
+//	clientset
+//}
+
+func printPodList(c *gin.Context) {
+	clientset := initClient()
 
 	pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{})
 	judgeError(err)

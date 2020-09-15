@@ -1,18 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: latencyinjection-test
-  labels:
-    app: latencyinjection
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: latencyinjection
   template:
-    metadata:
-      labels:
-        app: latencyinjection
     spec:
       containers:
         - name: latencyinjection

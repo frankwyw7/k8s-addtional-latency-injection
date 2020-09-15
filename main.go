@@ -37,58 +37,7 @@ func main() {
 
 	http.ListenAndServe(":8092", nil)
 
-	//
-	//kubeconfigf := flag.String("kubeconfig", "/Users/mhausenblas/.kube/config", "absolute path to the kubeconfig file")
-	//flag.Parse()
-	//
-	//kubeconfig := filepath.Join(
-	//	os.Getenv("HOME"), ".kube", "config",
-	//)
-	//clientcmd.BuildConfigFromFlags()
-	//
-	//config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
-	//judgeError(err)
-	//
-	//clientset, err := kubernetes.NewForConfig(config)
-
-
-
-	//clientset.CoreV1().ConfigMaps().List()
-	//dList, dErr := clientset.AppsV1().Deployments("namespace").List(
-	//	nil,
-	//	metav1.ListOptions{},
-	//)
-	//judgeError(dErr)
-	//
-	//println(dList)
-
-
-
-	//for _, deployment := range dList.Items {
-	//	if filterDeployment(deployment) {
-	//		needInjectDeployments = append(needInjectDeployments, deployment)
-	//	}
-	//}
-	//
-	//response := v1beta1.AdmissionResponse{Allowed: true}
-	//println(response)
-
-	//v1beta1.AdmissionResponse{Allowed: true, Patch: "aaa", PatchType: func() {}}
-	//v1beta1.PatchTypeJSONPatch
-	//v1beta
-	//spec := dList.Items[0].Spec
-	//specStr := spec.String()
-	//spec.Template.
-	//
-	//for _, deploy := range dList.Items {
-	//
-	//}
-
 }
-
-//func updateK8s(old :v1.oldDeployment, new :v1) {
-//
-//}
 
 func getAllNetCard() []string {
 	cmd := exec.Command("bash", "-c", "ifconfig -s | awk 'NR>2{print $1}'")

@@ -9,7 +9,7 @@ ARG HTTP_PROXY
 ENV GO111MODULE=on
 ENV GOPROXY=https://goproxy.cn,direct
 
-WORKDIR /src
+WORKDIR /
 COPY go.mod .
 COPY go.sum .
 
@@ -21,19 +21,20 @@ RUN apk update
 #RUN cat <<EOF >/etc/apt/sources.list.d/kubernetes.list \
 #    deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main \
 #    EOF
+COPY config config
 
 RUN apk add --no-cache gcc g++ make bash git
 RUN go mod download
-COPY main.go /src/main.go
+COPY main.go /main.go
 RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a -o main
 
-#todo: multistage-build
+##todo: multistage-build
 #FROM golang:1.14.4-alpine3.12
-#COPY main /run/main
-#WORKDIR /run
+#COPY main /main
+#WORKDIR /
 #CMD ["/bin/bash"]
 #ENTRYPOINT ["sh", "-c", "sleep 5m"]
-
+RUN apk add iproute2
 EXPOSE 8092
 
 ENTRYPOINT ["./main"]

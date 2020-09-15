@@ -1,0 +1,10 @@
+{
+  "spec": {
+    "containers": [
+      {
+        "name": "kubernetes-serve-hostname",
+        "image": "new image"
+      }
+    ]
+  }
+}

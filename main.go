@@ -31,7 +31,7 @@ func main() {
 func latencyProcess(w http.ResponseWriter, req *http.Request) {
 	//todo check float or no
 
-	number, err := strconv.Atoi(req.Form.Get("number"))
+	number, err := strconv.Atoi(req.FormValue("number"))
 	judgeError(err)
 
 	err1 := exec.Command("bash", "-c", `ifconfig -s | awk '{print $1}' | xargs -I {} tc qdisc del dev {} root netem`).Start()

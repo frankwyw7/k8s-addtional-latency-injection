@@ -31,16 +31,14 @@ func main() {
 func latencyProcess(w http.ResponseWriter, req *http.Request) {
 	//todo check float or no
 
-	number:= req.Form.Get("number")
-
-	exec.Command("bash", "-c", `kubectl get deployments | grep nginx  | awk '{print $1}' | xargs -I {} kubectl patch deployment {} --patch "$(cat manifests/latency-setting-sidecar-single.yaml)"`)
-	exec.Command("bash", "-c", `kubectl get deployments | grep nginx  | awk '{print $1}' | xargs -I {} kubectl patch deployment {} --patch "$(cat manifests/latency-setting-sidecar-singlnumber := e.yaml)"`)
-
-	obj := map[string]string{"latency": number}
-	bytes, err := json.Marshal(obj)
+	number, err := strconv.Atoi(req.Form.Get("number"))
 	judgeError(err)
-	w.Write(bytes)
-	w.WriteHeader(200)
+
+	err1 := exec.Command("bash", "-c", `ifconfig -s | awk '{print $1}' | xargs -I {} tc qdisc del dev {} root netem`).Start()
+	err2 := exec.Command("bash", "-c", `ifconfig -s | awk '{print $1}' | xargs -I {} tc qdisc add dev {} root netem delay ` + strconv.Itoa(number/2) + `ms`).Start()
+
+	judgeError(err1)
+	judgeError(err2)
 }
 
 func setNetcardLatency(netcard string, latencyNum int) {
